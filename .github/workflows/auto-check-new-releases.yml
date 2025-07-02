@@ -15,26 +15,17 @@ jobs:
   get-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT }}
+      - name: Ensure release-versions directory exists
+        run: mkdir -p release-versions
       - name: Fetch release version
         id: fetch-version
         run: |
           curl -sL https://raw.githubusercontent.com/n8n-io/n8n/master/package.json | jq -r ".version" > release-versions/n8n-latest.txt
-          echo ::set-output name=version::$(cat release-versions/n8n-latest.txt)
-
-      #      - name: Check for modified files
-      #        id: git-check
-      #        run: echo ::set-output name=modified::$([ -z "`git status --porcelain`" ] && echo "false" || echo "true")
-      #      - name: Commit latest release version
-      #        if: steps.git-check.outputs.modified == 'true'
-      #        run: |
-      #          git config --global user.name '${{ secrets.FULL_NAME }}'
-      #          git config --global user.email '${{ secrets.EMAIL }}'
-      #          git commit -am "New release: $(cat release-versions/n8n-latest.txt)"
-      #          git push
-
+          echo "version=$(cat release-versions/n8n-latest.txt)" >> $GITHUB_OUTPUT
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: New auto release v${{steps.fetch-version.outputs.version}}
+          commit_message: New auto release v${{ steps.fetch-version.outputs.version }}
+          file_pattern: release-versions/n8n-latest.txt
