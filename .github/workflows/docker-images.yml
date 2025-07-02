@@ -18,23 +18,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get current repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Get the version
         id: vars
-        run: echo ::set-output name=tag::$(cat release-versions/n8n-latest.txt)
+        run: |
+          echo "tag=$(cat release-versions/n8n-latest.txt)" >> $GITHUB_OUTPUT
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - run: cp default-requirements.txt images/n8n-debian/requirements.txt
 
       - name: Build (debian)
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: ./images/n8n-debian
           build-args: |
@@ -46,7 +49,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/n8n-python:latest-debian
 
       - name: Docker Hub Description (README.md)
-        uses: peter-evans/dockerhub-description@v2
+        uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -58,8 +61,8 @@ jobs:
         uses: actions/create-release@v1
         continue-on-error: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{steps.vars.outputs.tag}}
-          release_name: Release ${{steps.vars.outputs.tag}}
-          body: n8n v${{steps.vars.outputs.tag}} (python3 included)
+          tag_name: v${{ steps.vars.outputs.tag }}
+          release_name: Release ${{ steps.vars.outputs.tag }}
+          body: n8n v${{ steps.vars.outputs.tag }} (python3 included)
