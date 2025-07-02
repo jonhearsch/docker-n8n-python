@@ -8,9 +8,10 @@
 name: Docker Image CI
 
 on:
-  push:
-    paths:
-      - 'release-versions/*'
+  # push:
+  #   paths:
+  #     - 'release-versions/*'
+  workflow_dispatch:
 
 jobs:
   build:
