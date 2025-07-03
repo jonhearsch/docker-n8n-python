@@ -10,7 +10,17 @@ RUN if [ -z "$N8N_VERSION" ] ; then echo "The N8N_VERSION argument is missing!" 
 
 RUN \
 	apt-get update && \
-	apt-get -y install graphicsmagick gosu git
+	apt-get -y install \ 
+		graphicsmagick \ 
+		gosu \ 
+		git \
+		libheif-dev \
+		libde265-dev \
+		libjpeg-dev \
+		libpng-dev \
+		libtiff-dev \
+		&& rm -rf /var/lib/apt/lists/*
+
 
 # Install python requirements
 RUN mkdir /requirements
