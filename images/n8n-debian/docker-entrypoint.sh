@@ -1,16 +1,9 @@
 #!/bin/sh
-
-
-if [ -d /root/.n8n ] ; then
-  chmod o+rx /root
-  chown -R pn /root/.n8n
-  ln -s /root/.n8n /home/pn/
-fi
-
+# This script is used to start the n8n service in a Docker container.
 if [ "$#" -gt 0 ]; then
   # Got started with arguments
-  exec gosu pn "$@"
+  exec n8n "$@"
 else
   # Got started without arguments
-  exec gosu pn n8n
+  exec n8n
 fi
