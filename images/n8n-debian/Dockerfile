@@ -4,8 +4,8 @@ FROM nikolaik/python-nodejs:python3.13-nodejs24
 
 # --- User Setup (Keep as you have it, good for security) ---
 # Changing user `pn` to `node`
-RUN usermod --login node --move-home --home /home/node pn
-RUN groupmod --new-name node pn
+# RUN usermod --login node --move-home --home /home/node pn
+# RUN groupmod --new-name node pn
 
 ARG N8N_VERSION
 
@@ -80,4 +80,4 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 EXPOSE 5678/tcp
 
 # Switch back to the 'node' user for security best practices for the running container
-USER node
+USER pn
