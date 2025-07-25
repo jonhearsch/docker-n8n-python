@@ -1,9 +1,9 @@
-FROM node:22-bullseye-slim
+FROM ubuntu:24.04
 
 LABEL maintainer="jon@hearsch.net"
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies
+# Install system dependencies and Node.js 22.x
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
@@ -18,6 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libde265-dev \
     tzdata \
     jq \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -31,12 +33,10 @@ ENV N8N_PORT=5678 \
 # Install n8n (latest)
 RUN npm install -g full-icu n8n@latest
 
-# Switch to non-root user
+# Create non-root user and set up home
+RUN useradd -ms /bin/bash node && mkdir -p /home/node/.n8n && chown -R node:node /home/node
 USER node
 WORKDIR /home/node
-
-# Ensure persistent folder for workflows, credentials, etc.
-RUN mkdir -p /home/node/.n8n
 
 EXPOSE 5678
 
