@@ -21,9 +21,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user for n8n
-RUN useradd --system --user-group --create-home node
-
 # Set up environment variables for n8n
 ENV N8N_PORT=5678 \
     N8N_BASIC_AUTH_ACTIVE=false \
